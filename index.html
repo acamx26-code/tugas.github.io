@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Inventaris Toko Serba Ada</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), #2980b9);
+            color: white;
+            padding: 20px 0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            text-align: center;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+        
+        .sidebar h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        .menu-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: var(--light);
+            border: none;
+            border-radius: 5px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .menu-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .content h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d35400;
+        }
+        
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .inventory-table th,
+        .inventory-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .inventory-table th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+        
+        .inventory-table tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: var(--light);
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .category {
+            display: inline-block;
+            background-color: rgba(46, 204, 113, 0.2);
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .alert-danger {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .alert-warning {
+            background-color: rgba(243, 156, 18, 0.2);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-form input {
+            flex: 1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        .data-management {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .content {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏪 Manajemen Inventaris Toko Serba Ada</h1>
+            <p>Sistem manajemen inventaris untuk mengelola stok barang toko</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="sidebar">
+                <h2>Menu Utama</h2>
+                <button class="menu-btn active" data-target="view-inventory">📋 Tampilkan Inventaris</button>
+                <button class="menu-btn" data-target="add-item">➕ Tambah Barang Baru</button>
+                <button class="menu-btn" data-target="remove-item">🗑️ Hapus Barang</button>
+                <button class="menu-btn" data-target="update-stock">📊 Update Stok</button>
+                <button class="menu-btn" data-target="search-item">🔍 Cari Barang</button>
+                <button class="menu-btn" data-target="data-management">💾 Kelola Data</button>
+            </div>
+            
+            <div class="content">
+                <!-- Tampilkan Inventaris -->
+                <div id="view-inventory" class="content-section active">
+                    <h2>Daftar Barang Inventaris</h2>
+                    <div id="inventory-list">
+                        <!-- Data inventaris akan ditampilkan di sini -->
+                    </div>
+                </div>
+                
+                <!-- Tambah Barang Baru -->
+                <div id="add-item" class="content-section">
+                    <h2>Tambah Barang Baru</h2>
+                    <form id="add-item-form">
+                        <div class="form-group">
+                            <label for="item-name">Nama Barang</label>
+                            <input type="text" id="item-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-price">Harga (Rp)</label>
+                            <input type="number" id="item-price" class="form-control" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-stock">Stok Awal</label>
+                            <input type="number" id="item-stock" class="form-control" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-categories">Kategori (pisahkan dengan koma, maks 2)</label>
+                            <input type="text" id="item-categories" class="form-control" placeholder="Contoh: kebersihan, rumah tangga">
+                        </div>
+                        <div class="form-group">
+                            <label for="item-tags">Tag (pisahkan dengan koma)</label>
+                            <input type="text" id="item-tags" class="form-control" placeholder="Contoh: murah, populer">
+                        </div>
+                        <button type="submit" class="btn btn-success">Tambah Barang</button>
+                    </form>
+                </div>
+                
+                <!-- Hapus Barang -->
+                <div id="remove-item" class="content-section">
+                    <h2>Hapus Barang</h2>
+                    <div class="form-group">
+                        <label for="remove-item-id">ID Barang yang Akan Dihapus</label>
+                        <input type="number" id="remove-item-id" class="form-control" min="1">
+                    </div>
+                    <button id="remove-item-btn" class="btn btn-danger">Hapus Barang</button>
+                    <div id="remove-item-result" class="alert" style="display: none;"></div>
+                </div>
+                
+                <!-- Update Stok -->
+                <div id="update-stock" class="content-section">
+                    <h2>Update Stok Barang</h2>
+                    <div class="form-group">
+                        <label for="update-item-id">ID Barang</label>
+                        <input type="number" id="update-item-id" class="form-control" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="stock-action">Aksi</label>
+                        <select id="stock-action" class="form-control">
+                            <option value="+">Tambah Stok</option>
+                            <option value="-">Kurangi Stok</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock-amount">Jumlah</label>
+                        <input type="number" id="stock-amount" class="form-control" min="1">
+                    </div>
+                    <button id="update-stock-btn" class="btn btn-warning">Update Stok</button>
+                    <div id="update-stock-result" class="alert" style="display: none;"></div>
+                </div>
+                
+                <!-- Cari Barang -->
+                <div id="search-item" class="content-section">
+                    <h2>Cari Barang Berdasarkan Tag atau Kategori</h2>
+                    <div class="search-form">
+                        <input type="text" id="search-keyword" class="form-control" placeholder="Masukkan kata kunci (tag atau kategori)">
+                        <button id="search-btn" class="btn btn-primary">Cari</button>
+                    </div>
+                    <div id="search-results">
+                        <!-- Hasil pencarian akan ditampilkan di sini -->
+                    </div>
+                </div>
+                
+                <!-- Kelola Data -->
+                <div id="data-management" class="content-section">
+                    <h2>Kelola Data Inventaris</h2>
+                    <div class="data-management">
+                        <p>Fitur ini memungkinkan Anda untuk menyimpan dan memuat data inventaris dari file JSON.</p>
+                        
+                        <div class="form-group">
+                            <label>Simpan Data ke File</label>
+                            <button id="save-data-btn" class="btn btn-success">💾 Simpan Data ke File</button>
+                            <small>Data akan disimpan sebagai file JSON yang dapat diunduh</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Muat Data dari File</label>
+                            <input type="file" id="load-data-file" class="form-control" accept=".json">
+                            <button id="load-data-btn" class="btn btn-primary" style="margin-top: 10px;">📂 Muat Data dari File</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Reset Data</label>
+                            <button id="reset-data-btn" class="btn btn-danger">🔄 Reset ke Data Awal</button>
+                            <small>Hati-hati: Aksi ini akan menghapus semua data yang ada!</small>
+                        </div>
+                    </div>
+                    <div id="data-management-result" class="alert" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data inventaris awal
+        let inventaris = {};
+        let nextId = 1;
+
+        // Fungsi untuk memuat data awal
+        async function loadInitialData() {
+            try {
+                // Coba muat data dari file JSON eksternal
+                const response = await fetch('./data/inventaris.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    inventaris = data.inventaris || {};
+                    nextId = data.nextId || (Math.max(...Object.keys(inventaris).map(Number), 0) + 1);
+                    console.log('Data berhasil dimuat dari file eksternal');
+                } else {
+                    // Jika file tidak ada, gunakan data default
+                    setDefaultData();
+                }
+            } catch (error) {
+                console.log('File data tidak ditemukan, menggunakan data default');
+                setDefaultData();
+            }
+        }
+
+        // Fungsi untuk mengatur data default
+        function setDefaultData() {
+            inventaris = {
+                1: {
+                    nama: "Sabun",
+                    harga: 5000.0,
+                    stok: 20,
+                    kategori: ["kebersihan", "rumah tangga"],
+                    tag: ["murah", "populer"]
+                },
+                2: {
+                    nama: "Minuman Soda",
+                    harga: 8000.0,
+                    stok: 15,
+                    kategori: ["minuman", "ringan"],
+                    tag: ["segar", "populer"]
+                }
+            };
+            nextId = Math.max(...Object.keys(inventaris).map(Number)) + 1;
+        }
+
+        // Fungsi untuk menampilkan inventaris
+        function tampilkanInventaris() {
+            const inventoryList = document.getElementById('inventory-list');
+            
+            if (Object.keys(inventaris).length === 0) {
+                inventoryList.innerHTML = '<div class="alert alert-warning">Inventaris kosong.</div>';
+                return;
+            }
+            
+            let html = `
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                            <th>Kategori</th>
+                            <th>Tag</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (const [id, data] of Object.entries(inventaris)) {
+                html += `
+                    <tr>
+                        <td>${id}</td>
+                        <td>${data.nama}</td>
+                        <td>Rp${data.harga.toLocaleString('id-ID')}</td>
+                        <td>${data.stok}</td>
+                        <td>
+                            ${data.kategori.map(kategori => `<span class="category">${kategori}</span>`).join('')}
+                        </td>
+                        <td>
+                            ${data.tag.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </td>
+                        <td class="action-buttons">
+                            <button class="btn btn-warning action-btn" onclick="editItem(${id})">Edit</button>
+                            <button class="btn btn-danger action-btn" onclick="hapusItem(${id})">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            inventoryList.innerHTML = html;
+        }
+
+        // Fungsi untuk menambah barang
+        function tambahBarang(nama, harga, stok, kategori, tag) {
+            if (!nama) {
+                return { success: false, message: "Nama tidak boleh kosong!" };
+            }
+            
+            if (harga <= 0) {
+                return { success: false, message: "Harga harus lebih dari 0!" };
+            }
+            
+            if (stok < 0) {
+                return { success: false, message: "Stok tidak boleh negatif!" };
+            }
+            
+            inventaris[nextId] = {
+                nama: nama,
+                harga: parseFloat(harga),
+                stok: parseInt(stok),
+                kategori: kategori,
+                tag: tag
+            };
+            
+            const idBaru = nextId;
+            nextId++;
+            
+            // Simpan perubahan ke localStorage
+            saveToLocalStorage();
+            
+            return { 
+                success: true, 
+                message: `✅ Barang '${nama}' berhasil ditambahkan dengan ID ${idBaru}!`,
+                id: idBaru
+            };
+        }
+
+        // Fungsi untuk menghapus barang
+        function hapusBarang(id) {
+            id = parseInt(id);
+            
+            if (!inventaris[id]) {
+                return { success: false, message: "❌ ID tidak ditemukan." };
+            }
+            
+            const namaBarang = inventaris[id].nama;
+            delete inventaris[id];
+            
+            // Simpan perubahan ke localStorage
+            saveToLocalStorage();
+            
+            return { 
+                success: true, 
+                message: `🗑️ Barang '${namaBarang}' (ID: ${id}) berhasil dihapus.` 
+            };
+        }
+
+        // Fungsi untuk update stok
+        function updat
